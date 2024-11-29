@@ -26,23 +26,12 @@ def bouge_droite():
     screen.blit(pion, (marge_gauche + pion_pos*case_size, marge_haut))
 
 def dessine_case(case_pos):
-    """Dessine la xème case du damier
-    """
-    global screen, case_size, cases_blanches, cases_noires, marge_gauche, marge_haut, bouge_gauche, bouge_droite
-    if case_pos % 2:
-        pygame.draw.rect(screen, cases_blanches,
-        (marge_gauche + case_pos*case_size,
-              marge_haut,
-              case_size,
-              case_size),
-              0)
-    else:
-        pygame.draw.rect(screen, cases_noires,
-        (marge_gauche + case_pos*case_size,
-              marge_haut,
-              case_size,
-              case_size),
-              0)
+    for i in range(10):
+        for a in range (10):
+            x = marge_gauche + i * case_size
+            y = marge_haut + a * case_size
+            couleur = cases_blanches if (i + a) % 2 == 0 else cases_noires
+            pygame.draw.rect(screen, couleur, (x, y, case_size,case_size))
 
 
 
@@ -75,11 +64,12 @@ path_to_images = "pictures\\"
 pygame.init()
 
 # Window size x, y
-nb_colonnes = len(plateau)
+nb_colonnes = len(plateau, )
+nb_lignes=10
 window_size = (case_size*nb_colonnes
                + marge_gauche
                + marge_droite,
-               case_size
+               case_size*nb_lignes
                + marge_haut
                + marge_bas
                )
