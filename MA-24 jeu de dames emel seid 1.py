@@ -1,54 +1,50 @@
-"""
-Name    : MA-24 jeu de dames emel seid.py
-Authors : Emel Keres
-Date    : 2024.11.15
-Version : 0.01
-Purpose : Jeu de dames avec la librairie pygamek,
-
-"""
-
 import pygame
 
 
-
-def bouge_gauche():
-    global screen, case_size, pion, pion_pos, nb_colonnes, marge_gauche, marge_haut
-    if pion_pos > 0 :
-        dessine_case(pion_pos)
-        pion_pos -= 1
-    screen.blit(pion, (marge_gauche + pion_pos*case_size, marge_haut))
-
-def bouge_droite():
-    global screen, case_size, pion, pion_pos, nb_colonnes, marge_gauche, marge_droite, marge_haut
-    if pion_pos < nb_colonnes-1:
-        dessine_case(pion_pos)
-        pion_pos += 1
-    screen.blit(pion, (marge_gauche + pion_pos*case_size, marge_haut))
-
-def dessine_case(case_pos):
-    for i in range(10):
-        for a in range (10):
+def dessine_plateau():
+    """
+    Dessine le damier et place les pions si présents.
+    """
+    for i in range(nb_colonnes):
+        for a in range(nb_lignes):
             x = marge_gauche + i * case_size
             y = marge_haut + a * case_size
             couleur = cases_blanches if (i + a) % 2 == 0 else cases_noires
-            pygame.draw.rect(screen, couleur, (x, y, case_size,case_size))
+            pygame.draw.rect(screen, couleur, (x, y, case_size, case_size))
 
+            # Dessiner les pions
+            if plateau[a][i] == 1:  # Pion blanc
+                screen.blit(pion_noir, (x, y))
+            elif plateau[a][i] == 2:  # Pion noir
+                screen.blit(pion_blanc, (x, y))
+
+
+def place_pions():
+    """
+    Place les pions sur les trois premières et trois dernières lignes.
+    - Trois premières lignes : pions blancs sur cases noires.
+    - Trois dernières lignes : pions noirs sur cases blanches.
+    """
+    for a in range(3):  # Les trois premières lignes
+        for i in range(nb_colonnes):
+            if (i + a) % 2 != 0:  # Cases noires
+                plateau[a][i] = 1  # Pions blancs
+
+    for a in range(nb_lignes - 3, nb_lignes):  # Les trois dernières lignes
+        for i in range(nb_colonnes):
+            if (i + a) % 2 == 0:  # Cases blanches
+                plateau[a][i] = 2  # Pions noirs
 
 
 # ------------
 # --- MAIN ---
 # ------------
 
-            # ERREUR 
-plateau =   [1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
-
-
-# Version pygame
+# Paramètres de base
 case_size = 80
-cases_blanches = (255, 255, 255)
-cases_noires = (180, 180, 180)
-pions_blancs = (255, 255, 255)
-pions_noirs = (0, 0, 0)
+cases_blanches = (238, 227, 211)
+cases_noires = (147, 119, 90)
+window_color = (89, 152, 255)
 
 # Marges autour du damier
 marge_gauche = 10
@@ -56,53 +52,42 @@ marge_droite = 10
 marge_haut = 10
 marge_bas = 10
 
+# Dimensions du plateau
+nb_colonnes = 10
+nb_lignes = 10
 
-pion_pos = 0
+# Plateau : 0 = vide, 1 = pion blanc, 2 = pion noir
+plateau = [[0 for _ in range(nb_colonnes)] for _ in range(nb_lignes)]
 
+# Placement des pions
+place_pions()
 
-path_to_images = "pictures\\"
+# Initialisation de Pygame
 pygame.init()
 
-# Window size x, y
-nb_colonnes = len(plateau, )
-nb_lignes=10
-window_size = (case_size*nb_colonnes
-               + marge_gauche
-               + marge_droite,
-               case_size*nb_lignes
-               + marge_haut
-               + marge_bas
-               )
-window_color = (89, 152, 255)
+# Taille de la fenêtre
+window_size = (case_size * nb_colonnes + marge_gauche + marge_droite,
+               case_size * nb_lignes + marge_haut + marge_bas)
 screen = pygame.display.set_mode(window_size)
-icon = pygame.image.load('International_draughts.png')
-pygame.display.set_icon(icon)
-pygame.display.set_caption("MA-24 : Jeu de Dames")
-screen.fill(window_color)
+pygame.display.set_caption("Jeu de Dames - Placement de Pions")
 
-# Affiche le damier
-for case in range(nb_colonnes):
-    dessine_case(case)
+# Charger les images des pions
+pion_noir = pygame.image.load('MA-24_pion.png')
+pion_noir = pygame.transform.scale(pion_noir, (case_size, case_size))
 
-# Charge l'image du pion
-pion = pygame.image.load('MA-24_pion.png')
-pion = pygame.transform.scale(pion, (case_size, case_size))
-screen.blit(pion, (marge_gauche, marge_haut))
+pion_blanc = pygame.image.load('MA-24_pion-blanc.png')
+pion_blanc = pygame.transform.scale(pion_blanc, (case_size, case_size))
+
+# Dessiner le plateau initial
+dessine_plateau()
 pygame.display.flip()
 
-
+# Boucle principale
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        btn_presse = pygame.key.get_pressed()
-        if btn_presse[pygame.K_RIGHT]:
-            bouge_droite()
-        elif btn_presse[pygame.K_LEFT]:
-            bouge_gauche()
-        elif btn_presse[pygame.K_q]:
-            running = False
-        pygame.display.update()
+    pygame.display.update()
 
 pygame.quit()
