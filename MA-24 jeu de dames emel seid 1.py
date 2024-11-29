@@ -23,7 +23,7 @@ def place_pions():
     """
     Place les pions sur les trois premières et trois dernières lignes.
     - Trois premières lignes : pions blancs sur cases noires.
-    - Trois dernières lignes : pions noirs sur cases blanches.
+    - Trois dernières lignes : pions noirs sur cases noires.
     """
     for a in range(3):  # Les trois premières lignes
         for i in range(nb_colonnes):
@@ -32,7 +32,7 @@ def place_pions():
 
     for a in range(nb_lignes - 3, nb_lignes):  # Les trois dernières lignes
         for i in range(nb_colonnes):
-            if (i + a) % 2 == 0:  # Cases blanches
+            if (i + a) % 2 != 0:  # Cases noires
                 plateau[a][i] = 2  # Pions noirs
 
 
