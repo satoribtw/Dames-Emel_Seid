@@ -3,7 +3,7 @@ Name    : MA-24 jeu de dames emel seid.py
 Authors : Emel Keres
 Date    : 2024.11.15
 Version : 0.01
-Purpose : Jeu de dames avec la librairie pygame
+Purpose : Jeu de dames avec la librairie pygamek,
 
 """
 
