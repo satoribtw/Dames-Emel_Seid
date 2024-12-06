@@ -1,6 +1,5 @@
 import pygame
 
-
 def dessine_plateau():
     """
     Dessine le damier et place les pions si présents.
@@ -36,21 +35,18 @@ def place_pions():
                 plateau[a][i] = 2  # Pions noirs
 
 
-# ------------
-# --- MAIN ---
-# ------------
+# ------------ MAIN ------------
 
 # Paramètres de base
 case_size = 80
 cases_blanches = (238, 227, 211)
 cases_noires = (147, 119, 90)
-window_color = (89, 152, 255)
 
 # Marges autour du damier
-marge_gauche = 10
-marge_droite = 10
-marge_haut = 10
-marge_bas = 10
+marge_gauche = 100
+marge_droite = 100
+marge_haut = 100
+marge_bas = 100
 
 # Dimensions du plateau
 nb_colonnes = 10
@@ -71,6 +67,10 @@ window_size = (case_size * nb_colonnes + marge_gauche + marge_droite,
 screen = pygame.display.set_mode(window_size)
 pygame.display.set_caption("Jeu de Dames - Placement de Pions")
 
+# Charger l'image de fond
+background_image = pygame.image.load('a52a2a.png')  # Remplacez 'background.jpg' par le chemin de votre image
+background_image = pygame.transform.scale(background_image, window_size)  # Redimensionner l'image à la taille de la fenêtre
+
 # Charger les images des pions
 pion_noir = pygame.image.load('MA-24_pion.png')
 pion_noir = pygame.transform.scale(pion_noir, (case_size, case_size))
@@ -78,7 +78,8 @@ pion_noir = pygame.transform.scale(pion_noir, (case_size, case_size))
 pion_blanc = pygame.image.load('MA-24_pion-blanc.png')
 pion_blanc = pygame.transform.scale(pion_blanc, (case_size, case_size))
 
-# Dessiner le plateau initial
+# Dessiner le plateau initial avec une image de fond
+screen.blit(background_image, (0, 0))  # Afficher l'image de fond
 dessine_plateau()
 pygame.display.flip()
 
