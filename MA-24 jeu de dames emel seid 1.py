@@ -34,6 +34,48 @@ def place_pions():
             if (i + a) % 2 != 0:  # Cases noires
                 plateau[a][i] = 2  # Pions noirs
 
+def bouge_gauche():
+    global screen, case_size, pion, pion_pos, nb_colonnes, marge_gauche, marge_haut, pion_ligne
+    if pion_pos > 0 :
+        dessine_plateau()
+        pion_pos -= 1
+    screen.blit(pion, (marge_gauche + pion_pos * case_size, marge_haut))
+
+def bouge_droite():
+    global screen, case_size, pion, pion_pos, nb_colonnes, marge_gauche, marge_droite, marge_haut, pion_ligne
+    if pion_pos < nb_colonnes-1:
+        dessine_plateau()
+        pion_pos += 1
+    screen.blit(pion, (marge_gauche + pion_pos * case_size, marge_haut))
+
+def bouge_bas_droite():
+    global pion_pos_x, pion_pos_y
+    if pion_pos_x < nb_colonnes - 1 and pion_pos_y < nb_lignes - 1:
+        pion_pos_x += 1
+        pion_pos_y += 1
+
+
+def bouge_bas_gauche():
+    global pion_pos_x, pion_pos_y
+    if pion_pos_x > 0 and pion_pos_y < nb_lignes - 1:
+        pion_pos_x -= 1
+        pion_pos_y += 1
+
+
+def bouge_haut_droite():
+    global pion_pos_x, pion_pos_y
+    if pion_pos_x < nb_colonnes - 1 and pion_pos_y > 0:
+        pion_pos_x += 1
+        pion_pos_y -= 1
+
+
+def bouge_haut_gauche():
+    global pion_pos_x, pion_pos_y
+    if pion_pos_x > 0 and pion_pos_y > 0:
+        pion_pos_x -= 1
+        pion_pos_y -= 1
+
+
 
 # ------------ MAIN ------------
 
@@ -51,6 +93,12 @@ marge_bas = 100
 # Dimensions du plateau
 nb_colonnes = 10
 nb_lignes = 10
+pion_ligne = 9
+pion_pos = 0
+pions_pos_x = 0
+pions_pos_y = 0
+pion_noir_pos_x = 0
+pion_noir_pos_y = 0
 
 # Plateau : 0 = vide, 1 = pion blanc, 2 = pion noir
 plateau = [[0 for _ in range(nb_colonnes)] for _ in range(nb_lignes)]
@@ -89,6 +137,18 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+            btn_presse = pygame.key.get_pressed()
+            if btn_presse[pygame.K_RIGHT]:
+                bouge_droite()
+            elif btn_presse[pygame.K_LEFT]:
+                bouge_gauche()
+            elif btn_presse[pygame.K_q]:
+                running = False
+            elif btn_presse[pygame.K_LEFT] and btn_presse[pygame.K_LEFT]:
+                bouge_bas_gauche("haut_gauche")
+            elif btn_presse[pygame.K_RIGHT] and btn_presse[pygame.K_RIGHT]:
+                bouge_bas_droite("haut_droite")
+
     pygame.display.update()
 
 pygame.quit()
