@@ -24,12 +24,12 @@ def place_pions():
     - Trois premières lignes : pions blancs sur cases noires.
     - Trois dernières lignes : pions noirs sur cases noires.
     """
-    for a in range(3):  # Les trois premières lignes
+    for a in range(4):  # Les trois premières lignes
         for i in range(nb_colonnes):
             if (i + a) % 2 != 0:  # Cases noires
                 plateau[a][i] = 1  # Pions blancs
 
-    for a in range(nb_lignes - 3, nb_lignes):  # Les trois dernières lignes
+    for a in range(nb_lignes - 4, nb_lignes):  # Les trois dernières lignes
         for i in range(nb_colonnes):
             if (i + a) % 2 != 0:  # Cases noires
                 plateau[a][i] = 2  # Pions noirs
@@ -83,6 +83,7 @@ def bouge_haut_gauche():
 case_size = 80
 cases_blanches = (238, 227, 211)
 cases_noires = (147, 119, 90)
+bleu = (0, 0, 255)
 
 # Marges autour du damier
 marge_gauche = 100
@@ -118,6 +119,15 @@ pygame.display.set_caption("Jeu de Dames - Placement de Pions")
 # Charger l'image de fond
 background_image = pygame.image.load('a52a2a.png')  # Remplacez 'background.jpg' par le chemin de votre image
 background_image = pygame.transform.scale(background_image, window_size)  # Redimensionner l'image à la taille de la fenêtre
+# Après l'initialisation de Pygame
+# Création de la police pour le texte
+font = pygame.font.Font(None, 36)  # None pour la police par défaut, 36 est la taille du texte
+texte = font.render("Jeu de Dames", True, bleu)  # Texte à afficher en rouge
+texte_rect = texte.get_rect()
+texte_rect.topright = (window_size[0] - 20, 20)  # Position du texte en haut à droite
+
+# Dans la boucle principale, après dessine_plateau()
+screen.blit(texte, texte_rect)  # Affiche le texte sur l'écran
 
 # Charger les images des pions
 pion_noir = pygame.image.load('MA-24_pion.png')
@@ -127,7 +137,8 @@ pion_blanc = pygame.image.load('MA-24_pion-blanc.png')
 pion_blanc = pygame.transform.scale(pion_blanc, (case_size, case_size))
 
 # Dessiner le plateau initial avec une image de fond
-screen.blit(background_image, (0, 0))  # Afficher l'image de fond
+screen.blit(background_image, (0, 0))
+screen.blit(texte, texte_rect)# Afficher l'image de fond
 dessine_plateau()
 pygame.display.flip()
 
