@@ -34,48 +34,39 @@ def place_pions():
             if (i + a) % 2 != 0:  # Cases noires
                 plateau[a][i] = 2  # Pions noirs
 
-def bouge_gauche():
-    global screen, case_size, pion, pion_pos, nb_colonnes, marge_gauche, marge_haut, pion_ligne
-    if pion_pos > 0 :
-        dessine_plateau()
-        pion_pos -= 1
-    screen.blit(pion, (marge_gauche + pion_pos * case_size, marge_haut))
+# Vérifie si le mouvement est valide
+def mouvement_valide(x1, y1, x2, y2, joueur):
+    if 0 <= x2 < nb_colonnes and 0 <= y2 < nb_lignes and plateau[y2][x2] == 0:
+        if joueur == 1 and y2 == y1 - 1 and abs(x2 - x1) == 1:
+            return True
+        elif joueur == 2 and y2 == y1 + 1 and abs(x2 - x1) == 1:
+            return True
+    return False
 
-def bouge_droite():
-    global screen, case_size, pion, pion_pos, nb_colonnes, marge_gauche, marge_droite, marge_haut, pion_ligne
-    if pion_pos < nb_colonnes-1:
-        dessine_plateau()
-        pion_pos += 1
-    screen.blit(pion, (marge_gauche + pion_pos * case_size, marge_haut))
+# Déplace un pion sur le plateau
+def deplace_pion(x1, y1, x2, y2):
+    plateau[y2][x2] = plateau[y1][x1]
+    plateau[y1][x1] = 0
 
-def bouge_bas_droite():
-    global pion_pos_x, pion_pos_y
-    if pion_pos_x < nb_colonnes - 1 and pion_pos_y < nb_lignes - 1:
-        pion_pos_x += 1
-        pion_pos_y += 1
+# Déplace un pion en fonction des touches de direction
+def deplace_avec_fleches(selection, direction, joueur):
+    if selection:
+        x1, y1 = selection
+        if direction == "haut_gauche":
+            x2, y2 = x1 - 1, y1 - 1
+        elif direction == "haut_droite":
+            x2, y2 = x1 + 1, y1 - 1
+        elif direction == "bas_gauche":
+            x2, y2 = x1 - 1, y1 + 1
+        elif direction == "bas_droite":
+            x2, y2 = x1 + 1, y1 + 1
+        else:
+            return selection
 
-
-def bouge_bas_gauche():
-    global pion_pos_x, pion_pos_y
-    if pion_pos_x > 0 and pion_pos_y < nb_lignes - 1:
-        pion_pos_x -= 1
-        pion_pos_y += 1
-
-
-def bouge_haut_droite():
-    global pion_pos_x, pion_pos_y
-    if pion_pos_x < nb_colonnes - 1 and pion_pos_y > 0:
-        pion_pos_x += 1
-        pion_pos_y -= 1
-
-
-def bouge_haut_gauche():
-    global pion_pos_x, pion_pos_y
-    if pion_pos_x > 0 and pion_pos_y > 0:
-        pion_pos_x -= 1
-        pion_pos_y -= 1
-
-
+        if mouvement_valide(x1, y1, x2, y2, joueur):
+            deplace_pion(x1, y1, x2, y2)
+            return None  # Déselectionner le pion après déplacement
+    return selection
 
 # ------------ MAIN ------------
 
@@ -83,7 +74,7 @@ def bouge_haut_gauche():
 case_size = 80
 cases_blanches = (238, 227, 211)
 cases_noires = (147, 119, 90)
-bleu = (0, 0, 255)
+bleu = (0, 0, 0)
 
 # Marges autour du damier
 marge_gauche = 100
@@ -107,12 +98,9 @@ plateau = [[0 for _ in range(nb_colonnes)] for _ in range(nb_lignes)]
 # Placement des pions
 place_pions()
 
-# Initialisation de Pygame
-pygame.init()
 
-# Taille de la fenêtre
-window_size = (case_size * nb_colonnes + marge_gauche + marge_droite,
-               case_size * nb_lignes + marge_haut + marge_bas)
+pygame.init()
+window_size = (case_size * nb_colonnes + marge_gauche + marge_droite, case_size * nb_lignes + marge_haut + marge_bas)
 screen = pygame.display.set_mode(window_size)
 pygame.display.set_caption("Jeu de Dames - Placement de Pions")
 
@@ -142,24 +130,27 @@ screen.blit(texte, texte_rect)# Afficher l'image de fond
 dessine_plateau()
 pygame.display.flip()
 
+# Variables de jeu
+joueur_actuel = 1  # 1 = blanc, 2 = noir
+selection = None
+joueur_actuel = 2
+
 # Boucle principale
 running = True
 while running:
+    dessine_plateau()
+    pygame.display.flip()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-            btn_presse = pygame.key.get_pressed()
-            if btn_presse[pygame.K_RIGHT]:
-                bouge_droite()
-            elif btn_presse[pygame.K_LEFT]:
-                bouge_gauche()
-            elif btn_presse[pygame.K_q]:
-                running = False
-            elif btn_presse[pygame.K_LEFT] and btn_presse[pygame.K_LEFT]:
-                bouge_bas_gauche("haut_gauche")
-            elif btn_presse[pygame.K_RIGHT] and btn_presse[pygame.K_RIGHT]:
-                bouge_bas_droite("haut_droite")
 
-    pygame.display.update()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                selection = deplace_avec_fleches(selection, "haut_gauche" if joueur_actuel == 1 else "bas_gauche", joueur_actuel)
+                joueur_actuel = 3 - joueur_actuel if not selection else joueur_actuel
+            elif event.key == pygame.K_RIGHT:
+                selection = deplace_avec_fleches(selection, "haut_droite" if joueur_actuel == 1 else "bas_droite", joueur_actuel)
+                joueur_actuel = 3 - joueur_actuel if not selection else joueur_actuel
 
 pygame.quit()
