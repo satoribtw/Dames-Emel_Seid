@@ -1,6 +1,5 @@
 import pygame
 
-# ------------ Fonctions ------------
 def dessine_plateau():
     """
     Dessine le damier et place les pions si présents.
@@ -14,13 +13,16 @@ def dessine_plateau():
 
             # Dessiner les pions
             if plateau[a][i] == 1:  # Pion blanc
-                screen.blit(pion_blanc, (x, y))
-            elif plateau[a][i] == 2:  # Pion noir
                 screen.blit(pion_noir, (x, y))
+            elif plateau[a][i] == 2:  # Pion noir
+                screen.blit(pion_blanc, (x, y))
+
 
 def place_pions():
     """
     Place les pions sur les trois premières et trois dernières lignes.
+    - Trois premières lignes : pions blancs sur cases noires.
+    - Trois dernières lignes : pions noirs sur cases noires.
     """
     for a in range(4):  # Les trois premières lignes
         for i in range(nb_colonnes):
@@ -31,6 +33,49 @@ def place_pions():
         for i in range(nb_colonnes):
             if (i + a) % 2 != 0:  # Cases noires
                 plateau[a][i] = 2  # Pions noirs
+
+def bouge_gauche():
+    global screen, case_size, pion, pion_pos, nb_colonnes, marge_gauche, marge_haut, pion_ligne
+    if pion_pos > 0 :
+        dessine_plateau()
+        pion_pos -= 1
+    screen.blit(pion, (marge_gauche + pion_pos * case_size, marge_haut))
+
+def bouge_droite():
+    global screen, case_size, pion, pion_pos, nb_colonnes, marge_gauche, marge_droite, marge_haut, pion_ligne
+    if pion_pos < nb_colonnes-1:
+        dessine_plateau()
+        pion_pos += 1
+    screen.blit(pion, (marge_gauche + pion_pos * case_size, marge_haut))
+
+def bouge_bas_droite():
+    global pion_pos_x, pion_pos_y
+    if pion_pos_x < nb_colonnes - 1 and pion_pos_y < nb_lignes - 1:
+        pion_pos_x += 1
+        pion_pos_y += 1
+
+
+def bouge_bas_gauche():
+    global pion_pos_x, pion_pos_y
+    if pion_pos_x > 0 and pion_pos_y < nb_lignes - 1:
+        pion_pos_x -= 1
+        pion_pos_y += 1
+
+
+def bouge_haut_droite():
+    global pion_pos_x, pion_pos_y
+    if pion_pos_x < nb_colonnes - 1 and pion_pos_y > 0:
+        pion_pos_x += 1
+        pion_pos_y -= 1
+
+
+def bouge_haut_gauche():
+    global pion_pos_x, pion_pos_y
+    if pion_pos_x > 0 and pion_pos_y > 0:
+        pion_pos_x -= 1
+        pion_pos_y -= 1
+
+
 
 def coordonnees_souris_to_case(pos):
     """Convertit les coordonnées de la souris en indices de case sur le plateau."""
