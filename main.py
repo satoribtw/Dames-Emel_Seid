@@ -1,8 +1,27 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+#--------1---------2---------3---------4---------5---------6---------7---------8
+#2345678901234567890123456789012345678901234567890123456789012345678901234567890
+"""
+Name : main.py
+Authors : Emel Keres and Seid Fejzulahi
+Date : 2025.01.17
+Version : Final
+Purpose : Boucle principal du jeu avec l'interface du plateau et le nombre de joueur afficher, les pions noirs et blancs, dames
+
+---------------------------------------------------------------------------
+
+  # 2025-01-17 03 EMK and SFI
+  - Changement dans la boucle principal
+"""
+
 import pygame
 import gfx
 import rules
 
 # Paramètres de base
+# Fait par Emel et Seid
 case_size = 80
 cases_blanches = (238, 227, 211)
 cases_noires = (147, 119, 90)
@@ -47,6 +66,7 @@ text = font.render(f"Joueur : {current_player}", True, (255, 255, 255))  # Texte
 screen.blit(text, (marge_gauche, marge_haut - 40))  # Afficher en haut du plateau
 pygame.display.flip()
 
+# Fait par ChatGPT
 # la boucle principale
 running = True
 while running:

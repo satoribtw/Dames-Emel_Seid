@@ -1,3 +1,25 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+#--------1---------2---------3---------4---------5---------6---------7---------8
+#2345678901234567890123456789012345678901234567890123456789012345678901234567890
+"""
+Name : main.py
+Authors : Emel Keres and Seid Fejzulahi
+Date : 2025.01.17
+Version : Final
+Purpose : Le dessin du plateau
+
+---------------------------------------------------------------------------
+
+  # 2025-01-17 03 EMK and SFI
+  - Changement dans la boucle principal
+
+Fait par Seid et Emel
+
+"""
+
+
 import pygame
 
 def dessine_plateau(screen, plateau, nb_colonnes, nb_lignes, case_size, marge_gauche, marge_haut, cases_blanches, cases_noires, pion_blanc, pion_noir, dame_blanche, dame_noire):

@@ -1,3 +1,26 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+#--------1---------2---------3---------4---------5---------6---------7---------8
+#2345678901234567890123456789012345678901234567890123456789012345678901234567890
+"""
+Name : rules.py
+Authors : Emel Keres and Seid Fejzulahi
+Date : 2025.01.17
+Version : Final
+Purpose : Les règles et les déplacements du jeu de Dames
+
+---------------------------------------------------------------------------
+
+# 2024-12-22 03 EMK and SFI
+  - Ajout des mouvements des pions
+
+  # 2025-01-16 03 EMK and SFI
+  - Ajout de la dame et des mouvements de la dame, capture des pions adverse par la dame
+
+  Fait par ChatGPT
+
+"""
 def place_pions(plateau, nb_colonnes, nb_lignes):
     """
     Place les pions sur les trois premières et trois dernières lignes.
@@ -92,7 +115,7 @@ def captures_possibles(plateau, ligne, colonne, current_player):
         if (
             0 <= ligne_arrivee < len(plateau) and
             0 <= colonne_arrivee < len(plateau[0]) and
-            capture_valide(plateau, ligne, colonne, ligne_arrivee, colonne_arrivee, current_player)
+            capture_valide(plateau, ligne, colonne, ligne_arrivee, colonne_arrivee, current_player) # valide la capture du pion adverse
         ):
             return True
     return False
