@@ -47,7 +47,7 @@ text = font.render(f"Joueur : {current_player}", True, (255, 255, 255))  # Texte
 screen.blit(text, (marge_gauche, marge_haut - 40))  # Afficher en haut du plateau
 pygame.display.flip()
 
-# Boucle principale
+# la boucle principale
 running = True
 while running:
     for event in pygame.event.get():

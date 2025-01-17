@@ -62,20 +62,16 @@ def deplacement_direction_valide(plateau, ligne_depart, colonne_depart, ligne_ar
 
 def capture_valide(plateau, ligne_depart, colonne_depart, ligne_arrivee, colonne_arrivee, current_player):
     """
-    Vérifie si une capture est valide et effectue la capture si c'est le cas.
+    Vérifie si une capture par un pion est valide et effectue la capture si c'est le cas.
     """
-    if (
-        abs(ligne_arrivee - ligne_depart) == 2 and  # Déplacement de deux cases
-        abs(colonne_arrivee - colonne_depart) == 2  # Déplacement diagonal
-    ):
+    if abs(ligne_arrivee - ligne_depart) == 2 and abs(colonne_arrivee - colonne_depart) == 2:
         ligne_milieu = (ligne_depart + ligne_arrivee) // 2
         colonne_milieu = (colonne_depart + colonne_arrivee) // 2
 
         # Vérifier si la case intermédiaire contient un pion adverse
         if (
-            plateau[ligne_milieu][colonne_milieu] != 0 and
-            plateau[ligne_milieu][colonne_milieu] not in [current_player, current_player + 2] and
-            plateau[ligne_arrivee][colonne_arrivee] == 0  # La case d'arrivée doit être vide
+            plateau[ligne_milieu][colonne_milieu] not in [0, current_player, current_player + 2] and
+            plateau[ligne_arrivee][colonne_arrivee] == 0
         ):
             # Effectuer la capture
             plateau[ligne_milieu][colonne_milieu] = 0  # Retirer le pion capturé
@@ -115,71 +111,44 @@ def promotion_dame(plateau, nb_colonnes, nb_lignes):
         if plateau[0][i] == 2:  # Pion noir
             plateau[0][i] = 4  # Devenir dame noire
 
-def deplacement_dame_valide(plateau, ligne_depart, colonne_depart, ligne_arrivee, colonne_arrivee):
+def capture_dame_valide(plateau, ligne_depart, colonne_depart, ligne_arrivee, colonne_arrivee, joueur):
     """
-    Vérifie si un déplacement de dame est valide (diagonale libre et toutes les cases entre départ et arrivée sont vides).
+    Vérifie si une capture par une dame est valide et effectue la capture si c'est le cas.
     """
-    # Vérifier si c'est bien un déplacement en diagonale
-    if abs(ligne_arrivee - ligne_depart) != abs(colonne_arrivee - colonne_depart):
-        return False  # Pas un déplacement en diagonale
+    delta_ligne = ligne_arrivee - ligne_depart
+    delta_colonne = colonne_arrivee - colonne_depart
 
-    # Déterminer la direction du déplacement
-    delta_ligne = 1 if ligne_arrivee > ligne_depart else -1
-    delta_colonne = 1 if colonne_arrivee > colonne_depart else -1
+    # Vérifier que le déplacement est diagonal
+    if abs(delta_ligne) != abs(delta_colonne):
+        return False
 
-    # Parcourir les cases intermédiaires sur la diagonale
-    ligne, colonne = ligne_depart + delta_ligne, colonne_depart + delta_colonne
-    while (ligne, colonne) != (ligne_arrivee, colonne_arrivee):
-        if plateau[ligne][colonne] != 0:
-            return False  # Une case intermédiaire est occupée
-        ligne += delta_ligne
-        colonne += delta_colonne
+    # Vérifier qu'il n'y a qu'une seule pièce adverse sur le chemin
+    direction_ligne = 1 if delta_ligne > 0 else -1
+    direction_colonne = 1 if delta_colonne > 0 else -1
+    pieces_trouvees = 0
+    ligne_captured = colonne_captured = None  # Coordonnées du pion capturé
 
-def capture_dame_valide(plateau, ligne_depart, colonne_depart, ligne_arrivee, colonne_arrivee, current_player):
-    """
-    Vérifie si une capture par une dame est valide.
-    La dame peut capturer un pion adverse, même s'il est éloigné,
-    tant que la case après lui est vide et qu'il n'y a pas d'autres pions entre les deux.
-    """
-    # Vérifier si c'est bien un déplacement en diagonale
-    if abs(ligne_arrivee - ligne_depart) != abs(colonne_arrivee - colonne_depart):
-        return False  # Pas un déplacement en diagonale
-
-    # Déterminer la direction du déplacement
-    delta_ligne = 1 if ligne_arrivee > ligne_depart else -1
-    delta_colonne = 1 if colonne_arrivee > colonne_depart else -1
-
-    # Variables pour suivre les cases sur la diagonale
-    ligne, colonne = ligne_depart + delta_ligne, colonne_depart + delta_colonne
-    pions_adverses = 0
-    ligne_pion_capture = colonne_pion_capture = None
-
-    # Parcourir les cases intermédiaires sur la diagonale
-    while (ligne, colonne) != (ligne_arrivee, colonne_arrivee):
-        if plateau[ligne][colonne] != 0:  # Une pièce est trouvé
-            if plateau[ligne][colonne] != current_player and pions_adverses == 0:
-                # Premier pion adverse trouvé
-                pions_adverses += 1
-                ligne_pion_capture, colonne_pion_capture = ligne, colonne
-            else:
-                # Plus d'un pion ou une pièce alliée bloque le chemin
+    for i in range(1, abs(delta_ligne)):
+        x = ligne_depart + i * direction_ligne
+        y = colonne_depart + i * direction_colonne
+        print(f"Inspecting cell: ({x}, {y}), value: {plateau[x][y]}")  # Debugging info
+        if plateau[x][y] == joueur or plateau[x][y] == joueur + 2:  # Pièce alliée
+            return False
+        elif plateau[x][y] != 0:  # Pièce adverse
+            pieces_trouvees += 1
+            ligne_captured, colonne_captured = x, y
+            if pieces_trouvees > 1:
                 return False
-        ligne += delta_ligne
-        colonne += delta_colonne
 
-    # Vérifier les conditions finales pour la capture
-    if (
-        pions_adverses == 1 and  # Il doit y avoir exactement un pion adverse
-        plateau[ligne_arrivee][colonne_arrivee] == 0  # La case d'arrivée doit être vide
-    ):
-        # Effectuer la capture
-        plateau[ligne_pion_capture][colonne_pion_capture] = 0  # Retirer le pion capturé
+    # Effectuer la capture si valide
+    if pieces_trouvees == 1:
+        print(f"Capturing piece at: ({ligne_captured}, {colonne_captured})")  # Debugging info
+        plateau[ligne_captured][colonne_captured] = 0  # Supprimer le pion capturé
         plateau[ligne_arrivee][colonne_arrivee] = plateau[ligne_depart][colonne_depart]  # Déplacer la dame
         plateau[ligne_depart][colonne_depart] = 0  # Vider la case de départ
         return True
 
     return False
-
 
 def changer_joueur(current_player):
     """Alterner entre les joueurs."""
